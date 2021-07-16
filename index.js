@@ -99,21 +99,28 @@ app.get("/jobs", (req, res) => {
   console.log(jobsList.length)
   res.send(jobsList)
 });
-
+const allowedQueryParams = ['taken']
 app.patch("/jobs/:id", (req, res) => {
   let idx = jobs.findIndex(j => {
   return j.id === req.params.id
 });
   console.log(idx)
-  let job = jobs[idx]
+  let job = {}
+  for (const param of allowedQueryParams) {
+    if (req.body[param]) {
+      job[param]=req.body[param]
+    }
+  }
   jobs[idx] = {
-  ...job,
-  ...req.body
-} 
-
-
-
-res.send(jobs[idx]);
+    ...jobs[idx],
+    ...job
+  }
+//   let job = jobs[idx]
+//   jobs[idx] = {
+//   ...job,
+//   ...req.body
+// } 
+  res.send(jobs[idx]);
 });
 
 app.delete("/jobs/:id", (req, res) => {
